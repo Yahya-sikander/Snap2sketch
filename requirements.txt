@@ -1,4 +1,4 @@
 streamlit
 streamlit-drawable-canvas
 Pillow
-google-generativeai
+google-genai
