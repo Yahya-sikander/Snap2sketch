@@ -17,19 +17,19 @@ apply_custom_css()
 # --- Streamlit UI ---
 
 st.markdown('<h1 class="main-title">✨ SNAP2SKETCH ✨</h1>', unsafe_allow_html=True)
-st.markdown('<p class="subtitle">🌟 Turn your drawings into magical adventures with AI! 🌟</p>', unsafe_allow_html=True)
+st.markdown('<p class="subtitle"> Turn your sketches and ideas into something cool </p>', unsafe_allow_html=True)
 
-st.markdown("### 🎭 Choose Your Creative Adventure!")
+st.markdown("### 🎭 How would you like to start?")
 option = st.radio(
     "Pick your magical tool:",
-    ["🖌️ Magic Drawing Canvas", "📤 Upload Your Artwork", "📸 Snap & Transform"],
-    help="Select how you want to create your masterpiece!"
+    ["Drawing Canvas", "Upload Your image", "Snap & Transform"],
+    help="Select how you want to create: "
 )
 
 img = None
 
-if option == "🖌️ Magic Drawing Canvas":
-    st.markdown("### 🎨 Your Magical Drawing Canvas")
+if option == "Drawing Canvas":
+    # st.markdown("### 🎨 Your Magical Drawing Canvas")
     col1, col2, col3, col4 = st.columns(4)
 
     with col1:
@@ -45,7 +45,7 @@ if option == "🖌️ Magic Drawing Canvas":
         st.markdown('<div class="tool-label">🎭 Background</div>', unsafe_allow_html=True)
         bg_color = st.color_picker("", "#ffffff", key="bg_color")
 
-    st.markdown('<div class="canvas-container">', unsafe_allow_html=True)
+    # st.markdown('<div class="canvas-container">', unsafe_allow_html=True)
     canvas_result = st_canvas(
         fill_color="rgba(255, 255, 255, 0.0)",
         stroke_width=brush_size,
@@ -66,21 +66,21 @@ if option == "🖌️ Magic Drawing Canvas":
     if st.button("🗑️ Clear Canvas & Start Fresh"):
         st.rerun()
 
-elif option == "📤 Upload Your Artwork":
+elif option == "Upload Your image":
     st.markdown("### 📁 Share Your Amazing Artwork!")
-    uploaded_file = st.file_uploader("Drag and drop your masterpiece here! 🎨", type=["jpg", "jpeg", "png"])
+    uploaded_file = st.file_uploader("Drag and drop image here 🎨", type=["jpg", "jpeg", "png"])
     if uploaded_file:
         img = Image.open(uploaded_file)
         st.success("🎉 Awesome! Your artwork is ready for magic!")
 
-elif option == "📸 Snap & Transform":
+elif option == "Snap & Transform":
     st.markdown("### 📷 Capture the Magic!")
     camera_img = st.camera_input("📱 Snap your picture")
     if camera_img:
         img = Image.open(camera_img)
         st.success("📸 Perfect shot! Ready for AI magic!")
 
-st.markdown("### 🪄 Tell the AI What Magic to Do!")
+st.markdown("### 🪄 Enter prompt: ")
 prompt = st.text_input(
     "✏️ Or write your own magical idea:",
     value=st.session_state.get('selected_prompt', ''),
@@ -105,15 +105,15 @@ if img and prompt:
             data, mime_type = generate_image(temp_path, prompt)
             if data:
                 st.balloons()
-                st.success("🎉 Your magical artwork is ready! 🎉")
+                st.success("🎉 Tadaa! image is ready! 🎉")
                 output_ext = mimetypes.guess_extension(mime_type)
                 output_path = f"output_image{output_ext}"
                 with open(output_path, "wb") as f:
                     f.write(data)
-                st.image(output_path, caption="✨ Your AI-Powered Magic Creation! ✨", use_column_width=True)
+                # st.image(output_path, caption="✨ Your AI-Powered Magic Creation! ✨", use_column_width=True)
                 with open(output_path, "rb") as file:
                     st.download_button(
-                        label="💾 Save Your Magic Artwork!",
+                        label="💾 Save Your Art!",
                         data=file.read(),
                         file_name=f"snap2sketch_magic_{hash(prompt)}.png",
                         mime="image/png",
@@ -122,7 +122,17 @@ if img and prompt:
                 st.error("😔 Oops! The magic didn't work this time. Try a different spell!")
 
 st.markdown("---")
-st.markdown('Created by Yahya Madam', unsafe_allow_html=True)
+st.markdown("---")
+st.markdown(
+    """
+    <div class="footer">
+        Developed by Yahya Madam  
+        <br>
+        Contact: <a href="mailto:yahya@example.com">yahya@example.com</a>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
 
 try:
     if 'temp_path' in locals():
