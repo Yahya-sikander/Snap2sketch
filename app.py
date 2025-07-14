@@ -126,9 +126,9 @@ st.markdown("---")
 st.markdown(
     """
     <div class="footer">
-        Developed by Yahya Madam  
+        Developed by Muhammad Yahya Sikander  
         <br>
-        Contact: <a href="mailto:yahya@example.com">yahya@example.com</a>
+        Contact: <a href="mailto:muhammadyahyasikander@gmail.com">muhammadyahyasikander@gmail.com</a>
     </div>
     """,
     unsafe_allow_html=True
