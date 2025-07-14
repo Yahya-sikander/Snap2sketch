@@ -1,4 +1,5 @@
 import streamlit as st
+from io import BytesIO
 from streamlit_drawable_canvas import st_canvas
 from utils import (
     apply_custom_css,
@@ -21,31 +22,28 @@ st.markdown('<p class="subtitle"> Turn your sketches and ideas into something co
 
 st.markdown("### 🎭 How would you like to start?")
 option = st.radio(
-    "Pick your magical tool:",
+    "Pick your tool:",
     ["Drawing Canvas", "Upload Your image", "Snap & Transform"],
-    help="Select how you want to create: "
+    help="Select how you want to create:"
 )
 
 img = None
 
 if option == "Drawing Canvas":
-    # st.markdown("### 🎨 Your Magical Drawing Canvas")
     col1, col2, col3, col4 = st.columns(4)
-
     with col1:
-        st.markdown('<div class="tool-label">🖍️ Brush Size</div>', unsafe_allow_html=True)
+        st.markdown('<div class="tool-label">Brush Size</div>', unsafe_allow_html=True)
         brush_size = st.slider("", 1, 20, 5, key="brush_size")
     with col2:
-        st.markdown('<div class="tool-label">🎨 Brush Color</div>', unsafe_allow_html=True)
+        st.markdown('<div class="tool-label">Brush Color</div>', unsafe_allow_html=True)
         stroke_color = st.color_picker("", "#000000", key="stroke_color")
     with col3:
-        st.markdown('<div class="tool-label">🖌️ Drawing Mode</div>', unsafe_allow_html=True)
+        st.markdown('<div class="tool-label">Drawing Mode</div>', unsafe_allow_html=True)
         drawing_mode = st.selectbox("", ["freedraw", "line", "rect", "circle"], key="drawing_mode")
     with col4:
-        st.markdown('<div class="tool-label">🎭 Background</div>', unsafe_allow_html=True)
+        st.markdown('<div class="tool-label">Background</div>', unsafe_allow_html=True)
         bg_color = st.color_picker("", "#ffffff", key="bg_color")
 
-    # st.markdown('<div class="canvas-container">', unsafe_allow_html=True)
     canvas_result = st_canvas(
         fill_color="rgba(255, 255, 255, 0.0)",
         stroke_width=brush_size,
@@ -58,7 +56,6 @@ if option == "Drawing Canvas":
         point_display_radius=brush_size if drawing_mode == "point" else 3,
         display_toolbar=True,
     )
-    st.markdown('</div>', unsafe_allow_html=True)
 
     if canvas_result.image_data is not None:
         img = Image.fromarray(canvas_result.image_data.astype("uint8"))
@@ -67,61 +64,64 @@ if option == "Drawing Canvas":
         st.rerun()
 
 elif option == "Upload Your image":
-    st.markdown("### 📁 Share Your Amazing Artwork!")
-    uploaded_file = st.file_uploader("Drag and drop image here 🎨", type=["jpg", "jpeg", "png"])
+    st.markdown("### 📁 Upload Your Image")
+    uploaded_file = st.file_uploader("Drop an image here", type=["jpg", "jpeg", "png"])
     if uploaded_file:
         img = Image.open(uploaded_file)
-        st.success("🎉 Awesome! Your artwork is ready for magic!")
+        st.success("Your image is ready!")
 
 elif option == "Snap & Transform":
-    st.markdown("### 📷 Capture the Magic!")
-    camera_img = st.camera_input("📱 Snap your picture")
+    st.markdown("### 📷 Take a Picture")
+    camera_img = st.camera_input("Snap a photo")
     if camera_img:
         img = Image.open(camera_img)
-        st.success("📸 Perfect shot! Ready for AI magic!")
+        st.success("Photo captured!")
 
-st.markdown("### 🪄 Enter prompt: ")
+# --- Prompt Input ---
+st.markdown("### 🪄 Enter a Prompt")
 prompt = st.text_input(
-    "✏️ Or write your own magical idea:",
+    "What do you want to see?",
     value=st.session_state.get('selected_prompt', ''),
-    placeholder="e.g., 'Make it glow like it has superpowers!'",
+    placeholder="e.g., 'Make it look like a sci-fi robot!'",
 )
 
-if img and prompt:
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp:
-        img.save(tmp.name)
-        temp_path = tmp.name
+# --- Always Show Button ---
+cast = st.button("✨ CAST THE MAGIC SPELL!")
 
-    if st.button("🪄 ✨ CAST THE MAGIC SPELL! ✨ 🪄"):
-        magic_messages = [
-            "🔮 Mixing magical colors...",
-            "✨ Sprinkling fairy dust...",
-            "🎨 Painting with rainbow brushes...",
-            "🌟 Adding sparkles and wonder...",
-            "🦄 Calling the art unicorns...",
-            "🎭 Creating pure magic..."
-        ]
-        with st.spinner(magic_messages[hash(prompt) % len(magic_messages)]):
+if cast:
+    if not img:
+        st.warning("Please provide a drawing or image first.")
+    elif not prompt:
+        st.warning("Enter a prompt to guide the AI.")
+    else:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as tmp:
+            img.save(tmp.name)
+            temp_path = tmp.name
+
+        with st.spinner("✨ Creating your artwork..."):
             data, mime_type = generate_image(temp_path, prompt)
-            if data:
-                st.balloons()
-                st.success("🎉 Tadaa! image is ready! 🎉")
-                output_ext = mimetypes.guess_extension(mime_type)
-                output_path = f"output_image{output_ext}"
-                with open(output_path, "wb") as f:
-                    f.write(data)
-                # st.image(output_path, caption="✨ Your AI-Powered Magic Creation! ✨", use_column_width=True)
-                with open(output_path, "rb") as file:
-                    st.download_button(
-                        label="💾 Save Your Art!",
-                        data=file.read(),
-                        file_name=f"snap2sketch_magic_{hash(prompt)}.png",
-                        mime="image/png",
-                    )
-            else:
-                st.error("😔 Oops! The magic didn't work this time. Try a different spell!")
 
-st.markdown("---")
+        if data:
+            st.balloons()
+            st.success("Tadaa! Here's your AI-generated image.")
+            st.image(BytesIO(data), caption="✨ Your AI Creation", use_column_width=True)
+
+            output_ext = mimetypes.guess_extension(mime_type)
+            output_path = f"output_image{output_ext}"
+            with open(output_path, "wb") as f:
+                f.write(data)
+
+            with open(output_path, "rb") as file:
+                st.download_button(
+                    label="💾 Save Your Art",
+                    data=file.read(),
+                    file_name=f"snap2sketch_magic_{hash(prompt)}.png",
+                    mime="image/png",
+                )
+        else:
+            st.error("Something went wrong. Try a different prompt.")
+
+# --- Footer ---
 st.markdown("---")
 st.markdown(
     """
@@ -134,6 +134,7 @@ st.markdown(
     unsafe_allow_html=True
 )
 
+# --- Cleanup ---
 try:
     if 'temp_path' in locals():
         os.unlink(temp_path)
