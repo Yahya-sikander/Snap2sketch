@@ -85,7 +85,7 @@ prompt = st.text_input(
     placeholder="e.g., 'Make it look like a sci-fi robot!'",
 )
 
-# --- Always Show Button ---
+# --- Button ---
 cast = st.button("✨ CAST THE MAGIC SPELL!")
 
 if cast:
