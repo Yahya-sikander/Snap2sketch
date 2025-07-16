@@ -27,7 +27,7 @@
 ## 📦 Installation (for local development)
 
 ```bash
-git clone [https://github.com/Yahya-sikander/Snap2sketch.git]
+git clone https://github.com/Yahya-sikander/Snap2sketch.git
 cd snap2sketch
 pip install -r requirements.txt
 streamlit run app.py
