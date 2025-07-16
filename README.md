@@ -10,40 +10,24 @@
 
 - 📸 **Image Upload** – Upload any photo to transform into a sketch or stylized version.
 - ✍️ **Draw Your Own** – Use a built-in canvas to sketch or write something manually.
-- 🎨 **AI-Powered Style Transfer** – Convert your image using prompts like:
-  - "Pencil sketch"
-  - "Watercolor art"
-  - "Cartoon version"
-  - "Charcoal drawing"
-- 🧠 **Gemini Vision AI** – Powered by Google’s Gemini API for smart image-to-image transformation.
 - 💾 **Download Result** – Save your transformed images with a single click.
-
----
-
-## 🚀 How to Use
-
-1. Go to the [live app](https://snaptosketch.streamlit.app/).
-2. Choose whether to:
-   - Upload an image, or
-   - Draw directly on the canvas.
-3. Enter a **style prompt** (e.g., “line art”, “anime style”, “sketch of a cat”).
-4. Click **Generate**.
-5. View and download your AI-generated sketch.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend/UI**: Streamlit
-- **AI Backend**: Gemini Vision API (Google)
-- **Image Processing**: PIL, NumPy, Streamlit DrawCanvas
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
+![Streamlit Canvas](https://img.shields.io/badge/Streamlit--Canvas-FF4B4B?style=for-the-badge&logo=canvas&logoColor=white)
+![Gemini API](https://img.shields.io/badge/Gemini%20API-Google-4285F4?style=for-the-badge&logo=google&logoColor=white)
+
 
 ---
 
 ## 📦 Installation (for local development)
 
 ```bash
-git clone https://github.com/yourusername/snap2sketch.git
+git clone [https://github.com/Yahya-sikander/Snap2sketch.git]
 cd snap2sketch
 pip install -r requirements.txt
 streamlit run app.py
